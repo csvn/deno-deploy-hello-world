@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests
         run: |
-          deno test --coverage=cov_profile
+          deno test -A --coverage=cov_profile
           deno coverage cov_profile --lcov --output=cov_profile.txt
 
       - name: Upload coverage
