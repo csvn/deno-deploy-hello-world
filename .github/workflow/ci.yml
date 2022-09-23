@@ -1,0 +1,47 @@
+name: Deploy
+
+concurrency: 
+  group: production
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: production
+      cancel-in-progress: true
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3.0.2
+      
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1.1.0
+        with:
+          deno-version: v1.x
+
+      - name: Run tests
+        run: |
+          deno test --coverage=cov_profile
+          deno coverage cov_profile --lcov --output=cov_profile.txt
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./cov_profile.txt
+
+      - name: Deploy to Deno Deploy
+        uses: denoland/deployctl@v1.3.0
+        with:
+          project: csvn-hello-world
+          entrypoint: main.ts
