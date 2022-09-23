@@ -2,6 +2,6 @@ import { assertEquals } from '@std/testing/asserts.ts';
 import { count } from './count.ts';
 
 
-Deno.test('url test', () => {
+Deno.test('count', () => {
   assertEquals(count(), 42);
 });
